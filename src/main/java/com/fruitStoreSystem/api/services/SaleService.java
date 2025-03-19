@@ -59,9 +59,12 @@ public class SaleService {
         tempSale.setSaleTime(LocalDateTime.now());
 
 
-
         for (SaleItemRequestDTO item : sale.items()) {
-            totalValue+=item.subtotal();
+            Fruit fruit = fruitRepository.findById(item.fruitId())
+                    .orElseThrow(() -> new IllegalArgumentException("Fruta não encontrada"));
+            totalValue+=fruit.getValorVenda() * ((float) (100 - item.getDiscountPercentage()) /100);
+            totalValue*= item.getQuantity();
+
         }
         tempSale.setTotalValue(totalValue);
         tempSale = saleRepository.save(tempSale);
@@ -82,7 +85,7 @@ public class SaleService {
             newSaleItem.setFruit(fruit);
             newSaleItem.setQuantity(item.quantity());
             newSaleItem.setDiscountPercentage(item.discountPercentage());
-            newSaleItem.setSubtotal(item.subtotal());
+            newSaleItem.setSubtotal(fruit.getValorVenda());
 
             lista.add(newSaleItem);
 

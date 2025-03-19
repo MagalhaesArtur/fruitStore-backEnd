@@ -30,13 +30,10 @@ public class AuthenticationController {
 
     @PostMapping("/validateToken")
     public ResponseEntity authToken(@RequestBody TokenDTO token) {
-
         var sub = tokenService.validateToken(token.token());
         User user = userRepository.findUserByLogin(sub);
         UserDTO userDTO = new UserDTO(user.getUsername(), user.getId(),user.getRole());
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
-
-
     }
 
 
